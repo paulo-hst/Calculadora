@@ -4,7 +4,17 @@ import './Calculator.css'
 import Button from '../components/Button'
 import Display from '../components/Display'
 
+const initialState = {
+    displayValue: '0',
+    clearDisplay: false,
+    operation: null,
+    values: [ 0, 0 ],
+    current: 0,
+}
+
 export default class Calculator extends Component{
+
+    state = { ...initialState } // 'clona' a constante initialState e joga no state
 
     constructor(props){
         super(props)
@@ -15,7 +25,7 @@ export default class Calculator extends Component{
     }
 
     clearMemory(){
-        console.log('limpar')
+        this.setState({ ...initialState })
     }
 
     setOperation(operation){
@@ -23,14 +33,32 @@ export default class Calculator extends Component{
     }
 
     addDigit(n){
-        console.log(n)
+        // regra que evita utilização de dois pontos em um número real
+        if ( n === '.' && this.state.displayValue.includes('.') ){
+            return 
+        }
+
+        const clearDisplay = this.state.displayValue === '0' || this.state.clearDisplay
+        const currentValue = clearDisplay ? '' : this.state.displayValue
+        const displayValue = currentValue + n 
+        this.setState({ displayValue, clearDisplay: false })
+
+        if(n !== '.'){
+            const i = this.state.current // recebe o indice do valor a ser alterado
+            const newValue = parseFloat(displayValue) // converter para float o valor exibido no display
+            const values = [ ...this.state.values ] // clonado o conteúdo do state para a constante values
+            values[i] = newValue // alteração do valor atual do values (pode ser índice 0 ou 1)
+            this.setState({ values }) // retornou para o state os valores alterados
+            console.log(values)
+        }
+
     }
 
     render(){
 
         return(
             <div className="calculator">
-                <Display value={123456} />
+                <Display value={this.state.displayValue} />
                 <Button label="AC" click={this.clearMemory} triple />
                 <Button label="/" click={this.setOperation} operation />
                 <Button label="7" click={this.addDigit} />
