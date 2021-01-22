@@ -29,7 +29,34 @@ export default class Calculator extends Component{
     }
 
     setOperation(operation){
-        console.log(operation)
+        if(this.state.current === 0){
+            // altera os valores do estado state quando for o segundo valor da opreação
+            this.setState({ operation, clearDisplay: true, current: 1 })
+        }else{
+            const equals = operation === '='
+            const currentOperation = this.state.operation
+
+            const values = { ...this.state.values }
+
+            try{
+                // calculo realizado pelo app
+                values[0] = eval(`${values[0]} ${currentOperation} ${values[1]}`)
+                
+            } catch(erro){
+                values[0] = this.state.values
+            }
+
+            values[1] = 0
+
+            // exibir resultado do calculo
+            this.setState({ 
+                displayValue: values[0], 
+                operation: equals ? null : operation, 
+                current: equals ? 0 : 1,
+                clearDisplay: !equals,
+                values
+            })
+        }
     }
 
     addDigit(n){
@@ -49,13 +76,11 @@ export default class Calculator extends Component{
             const values = [ ...this.state.values ] // clonado o conteúdo do state para a constante values
             values[i] = newValue // alteração do valor atual do values (pode ser índice 0 ou 1)
             this.setState({ values }) // retornou para o state os valores alterados
-            console.log(values)
         }
 
     }
 
     render(){
-
         return(
             <div className="calculator">
                 <Display value={this.state.displayValue} />

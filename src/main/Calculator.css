@@ -8,4 +8,6 @@
     grid-template-columns: repeat(4, 25%);
     grid-template-rows: 1fr 48px 48px 48px 48px 48px; /* fr: fragmento */
 
+    box-shadow: 5px 5px 15px rgba(180, 26, 26, 0.822);
+
 }
